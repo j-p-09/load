@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Spletna stran - v izdelavi</title>
+<style>
+  :root{--size:160px}
+  html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  body{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#ffffff;
+    color:#111;
+    flex-direction:column;
+    gap:28px;
+    padding:24px;
+  }
+
+  .stage{
+    width:var(--size);
+    height:var(--size);
+    position:relative;
+    display:grid;
+    place-items:center;
+  }
+
+  /* The black spinner (ring) */
+  .spinner {
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    box-sizing:border-box;
+    border:10px solid transparent;
+    border-top-color:#000; /* black arc */
+    animation: spin 1s linear infinite;
+    transform-origin:50% 50%;
+    transition:opacity .6s ease, transform .6s ease;
+    background:linear-gradient(0deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.02) 100%);
+  }
+
+  @keyframes spin{
+    to{transform: rotate(360deg);}
+  }
+
+  /* Logo (initially hidden) */
+  .logo {
+    position:absolute;
+    width:68%;
+    height:68%;
+    object-fit:contain;
+    opacity:0;
+    transform: scale(.6) rotate(-12deg);
+    transition:opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1);
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.08));
+  }
+
+  /* When loaded: hide spinner and show logo */
+  .stage.ready .spinner{
+    opacity:0;
+    transform: scale(.6) rotate(90deg);
+  }
+  .stage.ready .logo{
+    opacity:1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  /* Small caption below */
+  .caption{
+    font-weight:700;
+    letter-spacing:1px;
+    text-align:center;
+    text-transform:uppercase;
+    color:#111;
+    font-size:14px;
+  }
+
+  /* Make it look nicer on small screens */
+  @media (max-width:420px){
+    :root{--size:120px}
+    .caption{font-size:13px}
+  }
+</style>
+</head>
+<body>
+  <div class="stage" id="stage" aria-live="polite" aria-atomic="true">
+    <div class="spinner" id="spinner" aria-hidden="true"></div>
+    <img src="jp-logo.png" alt="Logo" class="logo" id="logo">
+  </div>
+
+  <div class="caption">SPLETNA STRAN JE ŠE V IZDELAVI.</div>
+
+<script>
+  // After a short delay simulate "loading complete" and swap spinner to logo.
+  // Duration can be changed below (milliseconds).
+  const LOAD_MS = 2200;
+
+  function showLogo() {
+    const stage = document.getElementById('stage');
+    stage.classList.add('ready');
+    // for accessibility, update live region text briefly
+    stage.setAttribute('aria-label', 'Stran v izdelavi. Kontaktirajte nas pozneje.');
+  }
+
+  // Start timeout to swap
+  window.addEventListener('load', () => {
+    // If image is already cached, still ensure minimum spinner time
+    setTimeout(showLogo, LOAD_MS);
+  });
+
+  // If page loads quickly without firing 'load', fallback:
+  setTimeout(() => {
+    if (!document.getElementById('stage').classList.contains('ready')) {
+      showLogo();
+    }
+  }, LOAD_MS + 800);
+</script>
+</body>
+</html>
